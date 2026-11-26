@@ -126,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions); _HAS_STD_BYTE=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -139,6 +139,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ServerUtils.cpp" />
+    <ClCompile Include="src\ClientUtils.cpp" />
     <ClCompile Include="src\Client.cpp" />
     <ClCompile Include="src\FileWorker.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -148,6 +150,8 @@
     <ClCompile Include="src\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ServerUtils.h" />
+    <ClInclude Include="src\ClientUtils.h" />
     <ClInclude Include="src\ClientP.h" />
     <ClInclude Include="src\FileWorker.h" />
     <ClInclude Include="src\MessageClass.h" />

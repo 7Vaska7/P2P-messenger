@@ -1,3 +1,5 @@
 #pragma once
 
-int startClient();
+#include "MessegesOutMutexClass.h"
+
+int startClient(MessegesMutex& mmOut, MessegesMutex& mmIn);

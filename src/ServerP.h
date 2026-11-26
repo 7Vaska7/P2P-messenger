@@ -1,3 +1,5 @@
 #pragma once
 
-int startServer();
+#include "MessegesOutMutexClass.h"
+
+int startServer(MessegesMutex& mmOut, MessegesMutex& mmIn, std::promise<void> clientPromise);

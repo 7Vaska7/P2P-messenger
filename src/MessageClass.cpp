@@ -28,13 +28,14 @@ void Messege::addSybmol(char symbol)
     indexOfSymbol++;
 }
 
-void Messege::arrowsFunc(int arrow) 
+bool Messege::arrowsFunc(int arrow) 
 {
     if (arrow == ARROWLEFT) 
     {
         if (indexOfSymbol > 0) 
         {
             indexOfSymbol--;
+            return true;
         }
     }
     else if (arrow == ARROWRIGHT) 
@@ -42,8 +43,11 @@ void Messege::arrowsFunc(int arrow)
         if (indexOfSymbol < messege.length()) 
         {
             indexOfSymbol++;
+            return true;
         }
     }
+
+    return false;
 }
 
 bool Messege::isEmpty()
@@ -59,4 +63,9 @@ const char* Messege::c_str()
 int Messege::size()
 {
     return messege.size();
+}
+
+int Messege::getPositionOfCursor()
+{
+    return indexOfSymbol;
 }

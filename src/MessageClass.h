@@ -4,7 +4,8 @@
 #define ARROWLEFT 0
 #define ARROWRIGHT 1
 
-class Messege {
+class Messege 
+{
 private:
     std::string messege;
     int indexOfSymbol;
@@ -17,9 +18,10 @@ public:
     void deleteMessege();
     void backspaceMessege();
     void addSybmol(char symbol);
-    void arrowsFunc(int arrow);
+    bool arrowsFunc(int arrow);
     bool isEmpty();
     const char* c_str();
     int size();
     void messegeOut(const char* messegeOut, int length);
+    int getPositionOfCursor();
 };

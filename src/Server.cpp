@@ -2,21 +2,22 @@
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <string>
-#include "NetworkUtilsP.h"
-#include "MessageClass.h"
 #include <thread>
+#include <future>
 
+#include "MessageClass.h"
+#include "NetworkUtilsP.h"
+#include "ServerUtils.h"
 #include "MessegesOutMutexClass.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT 27015
-#define DEFAULT_PORT_UDP DEFAULT_PORT + 1
+inline constexpr uint16_t DEFAULT_PORT = 27015;
+inline constexpr uint16_t DEFAULT_PORT_UDP = DEFAULT_PORT + 1;
 
 using namespace std;
 
-int startServer()
+int startServer(MessegesMutex& mmOut, MessegesMutex& mmIn, promise<void> clientPromise)
 {
     WSADATA wsaData;
 
@@ -28,6 +29,8 @@ int startServer()
         return 1;
     }
 
+    thread ipReturnerT(&ServerUtils::waitReturnIP, DEFAULT_PORT_UDP);
+
     SOCKET lisSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     string local_ip = getLocalIp();
@@ -36,11 +39,10 @@ int startServer()
     sockaddr_in service{};
     service.sin_family = AF_INET;
     service.sin_port = htons(DEFAULT_PORT);
-    service.sin_port = htons(DEFAULT_PORT);
     service.sin_addr.s_addr = INADDR_ANY;
     inet_pton(AF_INET, local_ip.c_str(), &service.sin_addr);
 
-    if (bind(lisSocket,
+    if (::bind(lisSocket,
         (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
         wprintf(L"bind failed with error: %ld\n", WSAGetLastError());
         closesocket(lisSocket);
@@ -48,44 +50,13 @@ int startServer()
         return 1;
     }
 
-    SOCKET clientSocket;
-    wprintf(L"Waiting for client to connect...\n");
-
-    listen(lisSocket, SOMAXCONN);
-    
-    clientSocket = accept(lisSocket, NULL, NULL);
-    if (clientSocket == INVALID_SOCKET) {
-        wprintf(L"accept failed with error: %ld\n", WSAGetLastError());
-        closesocket(lisSocket);
-        WSACleanup();
-        return 1;
-    }
-    else
-        wprintf(L"Client connected.\n");
-
-    Messege messege;
-    MessegesMutex mmOut;
-    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-
-    std::cout << ">> ";
-    thread tMessege(messegesGetter, ref(clientSocket), ref(messege), &mmOut);
-    thread rMessege(messegesReader, ref(clientSocket), ref(messege), &mmOut);
+    clientPromise.set_value();
 
     while (true)
     {
-        string temp = mmOut.pop();
-        cout << temp;
-
-        if (temp[0] == '\x1A')
-        {
-            break;
-        }
+        
     }
-
-    tMessege.detach();
-    rMessege.detach();
     
-    closesocket(clientSocket);
     closesocket(lisSocket);
 
     WSACleanup();
